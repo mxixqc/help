@@ -19,11 +19,11 @@ class InAppNotificationManager: NSObject, UNUserNotificationCenterDelegate {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (_, _) in
         }
         UNUserNotificationCenter.current().delegate = self
-        EventService.shared.listenForEvents { message in
-            DispatchQueue.main.async {
-                print("transaction made \(message)")
-            }
-        }
+//        EventService.shared.listenForEvents { message in
+//            DispatchQueue.main.async {
+//                print("transaction made \(message)")
+//            }
+//        }
     }
     
 }

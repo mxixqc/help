@@ -13,9 +13,15 @@ struct Peer: Identifiable, Hashable {
     var name: String
 }
 
+//class RefreshAmount: ObservableObject, Transaction {
+//    @Published var transaction: Transaction? = nil
+//}
+
 class RefreshAmount: ObservableObject {
-    @Published var amount: String = "88.00"
+    @Published var transaction: Transaction = .init(payer: "Sample", payee: "Sample", amount: 5.00, dateTime: "2023-05-29T07:09:13.285424")
 }
+
+
 
 struct TransactionView: View {
     @Environment(\.dismiss) var dismiss
@@ -24,8 +30,29 @@ struct TransactionView: View {
     @State private var isShowingContent = false
     @State private var isShowingRadar = true
     @AppStorage(Keys.username) private var username: String?
-    @State var isLoading = true
+    @State private var sortedTransactions: [Transaction]? = nil
     
+    @State var mostRecentTransaction : Transaction?
+    
+    @State var isLoading = true
+    @ObservedObject var refreshAmount = RefreshAmount()
+    
+    @State var sections: [TransactionsPerDay]? = nil
+    @State var name = "My name"
+    func setup(){
+        Task {
+                startAdvertising()
+                getTransactions()
+        }
+        EventService.shared.listenForEvents { message in
+            DispatchQueue.main.async {
+                getTransactions()
+                self.isShowingContent = true
+                
+            }
+        }
+
+    }
     func getTransactions() {
         isLoading = true
         Task {
@@ -33,8 +60,8 @@ struct TransactionView: View {
                 let result = try await APIService.shared.getTransactions()
                 switch result {
                 case .success(let transactions):
+                    print("HELLO WORLD")
                     sections = parseTransactions(transactions)
-                    print(transactions)
                     isLoading = false
                 case .failure(let errorDetails):
                     isLoading = false
@@ -52,11 +79,11 @@ struct TransactionView: View {
         dateFormatter.dateStyle = .medium
         dateFormatter.timeStyle = .none
         dateFormatter.dateFormat = "yyyy-MM-dd"
-        var sortedTransactions = transaction.sorted { $0.getDate() > $1.getDate() }
-        mostRecentTransaction = sortedTransactions.first
-
+        sortedTransactions = transaction.sorted { $0.getDate() > $1.getDate() }
+        mostRecentTransaction = sortedTransactions?.first
         
-        let grouped = Dictionary(grouping: sortedTransactions) { (transaction: Transaction) ->
+        
+        let grouped = Dictionary(grouping: sortedTransactions!) { (transaction: Transaction) ->
             // group by date
             Date? in
             return dateFormatter.date(from: String(transaction.dateTime.dropLast(16)))
@@ -69,105 +96,82 @@ struct TransactionView: View {
                 date: dateFormatter.date(from: String(transactionsPerDay.value[0].dateTime.dropLast(16)))!)
         }.sorted { $0.date > $1.date }
     }
-
-    @ObservedObject var refreshAmount = RefreshAmount()
-        
-    let sections: [TransactionsPerDay]
-        
-    var body: some View {
-        VStack {
-            if isLoading {
-                ProgressView()
-            } else {
-                VStack {
-                ReceivedPayment(show: $isShowingContent)
-                                     .onAppear {
-                                         refreshAmount.amount = "78.00"
-                                         self.isShowingRadar.toggle()
-                                         Timer.scheduledTimer(withTimeInterval: 5, repeats: false) { timer in
-                                             withAnimation(.easeInOut(duration: 0.5)) {
-                                                 self.isShowingContent.toggle()
-                                                 self.isShowingRadar.toggle()
-                                                 
-                                             }
-                                         }
-                                        
-                                     }
-                AmountRecievedView(amount: refreshAmount.amount)
-            }.sheet(isPresented: $showingSheet){
-                ZStack{
-                    List {
-                        ForEach(self.sections) { section in
-                            Section(header: Text(section.title)) {
-                                ForEach(section.transactions) { transaction in
-                                    ZStack{
-                                        TransactionRow(transaction: transaction)
-                                        Button(action:
-                                                {
-                                            showingPopUp.toggle()
-                                            self.name = transaction
-                                        }, label: {
-                                            Text("")
-                                        })
-                                        
-                                    }
-                                }
-                            }
-                        }
-                    }.navigationBarTitle(Text("Events"))
-                        .presentationDetents([.fraction(0.45), .large])
-                        .presentationBackgroundInteraction(
-                            .enabled(upThrough: .large)
-                        )
-                    //                    .interactiveDismissDisabled(true)
-                    PopUpWindow(transactionDetails: name, show: $showingPopUp)
-                }}}
-            .onAppear {
-                    getTransactions()
-                }
-                .padding()
-        
-        }
-    }
-
-//             }
-//         }
-//         .onAppear {
-//             getTransactions()
-//         }
-//         .sheet(isPresented: $showingSheet){
-//             List {
-//                 ForEach(self.sections) { section in
-//                     Section(header: Text(section.title)) {
-//                         ForEach(section.transactions) { transaction in
-//                             TransactionRow(transaction: transaction)
-//                         }
-//                     }
-//                 }
-//             }
-//             .navigationBarTitle(Text("Events"))
-//             .presentationDetents([.fraction(0.45), .large])
-// //            .presentationBackgroundInteraction(
-// //                .enabled(upThrough: .large)
-// //            )
-//             .interactiveDismissDisabled(false)
-//         }
-//         .padding()
-    
-
     
     func startAdvertising() {
         Task {
             let response = try await APIService.shared.getAddress()
             MultipeerAdvertiserSession.shared.startAdvertisingPeer(peerID: response.addressToken)
             InAppNotificationManager.shared.setupNotifications()
-            print("tftftfuyfv")
-            self.isShowingContent = true
         }
     }
 
+    
+    var body: some View {
+        VStack {
+            if isLoading {
+                ProgressView()
+            } else {
+                VStack {
+                    ReceivedPayment(show: $isShowingContent)
+                        .onAppear {
+                            refreshAmount.transaction = mostRecentTransaction!
+                            self.isShowingRadar.toggle()
+                            Timer.scheduledTimer(withTimeInterval: 5, repeats: false) { timer in
+                                withAnimation(.easeInOut(duration: 0.5)) {
+                                    self.isShowingContent.toggle()
+                                    self.isShowingRadar.toggle()
+                                    
+                                }
+                            }
+                            
+                        }
+                    AmountRecievedView(mostRecentTransaction: refreshAmount.transaction)
+                }.sheet(isPresented: $showingSheet){
+                    ZStack{
+                        List {
+                            ForEach(self.sections!) { section in
+                                Section(header: Text(section.title)) {
+                                    ForEach(section.transactions) { transaction in
+                                        ZStack{
+                                            TransactionRow(transaction: transaction)
+                                            Button(action:
+                                                    {
+                                                showingPopUp.toggle()
+                                                self.name = "line 119"
+                                            }, label: {
+                                                Text("")
+                                            })
+                                            
+                                        }
+                                    }
+                                }
+                            }
+                        }.navigationBarTitle(Text("Events"))
+                            .presentationDetents([.fraction(0.45), .large])
+//                            .presentationBackgroundInteraction(
+//                                .enabled(upThrough: .large)
+//                            )
+                            .interactiveDismissDisabled(true)
+                        PopUpWindow(transactionDetails: mostRecentTransaction!,  title: "Hello!", show: $showingPopUp)
+                    }
+                    
+                }
+                    .padding()
+
+                
+            }
+                
+            
+        }.onAppear {
+            setup()
+        }
+
+    }
+}
+    
+
 struct AmountRecievedView: View {
-    @State var mostRecentTransaction: Transaction = .init(payer: "String", payee: "String", amount: 12.2, dateTime: "2023-05-29T07:09:13.285424")
+    var mostRecentTransaction: Transaction
     var body: some View {
         VStack{
             Text("Most Recent, \(mostRecentTransaction.getDate())")

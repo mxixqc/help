@@ -184,14 +184,14 @@ class APIService {
 //    }
     
     
-    func makeTransaction(amount: Int, addressToken: String) async throws -> Result<MakeTransactionResponse, ErrorDetails> {
-        var request = createRequest(method: .post, endpoint: Paths.transaction)
-        let json: [String: Any] = [
-            "token": addressToken,
-            "value": amount
-        ]
-        request.httpBody = try? JSONSerialization.data(withJSONObject: json)
-        return try await fetch(request)
-    }
+//    func makeTransaction(amount: Int, addressToken: String) async throws -> Result<MakeTransactionResponse, ErrorDetails> {
+//        var request = createRequest(method: .post, endpoint: Paths.transaction)
+//        let json: [String: Any] = [
+//            "token": addressToken,
+//            "value": amount
+//        ]
+//        request.httpBody = try? JSONSerialization.data(withJSONObject: json)
+//        return try await fetch(request)
+//    }
     
 }

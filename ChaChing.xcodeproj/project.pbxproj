@@ -20,6 +20,7 @@
 		22A49A462A1C9DB800D5094D /* ErrorDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22A49A452A1C9DB800D5094D /* ErrorDetails.swift */; };
 		22A49A4A2A1CA05F00D5094D /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22A49A492A1CA05F00D5094D /* Log.swift */; };
 		22A49A4C2A1CA26100D5094D /* PaynowLookupResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22A49A4B2A1CA26100D5094D /* PaynowLookupResponse.swift */; };
+		22D6D9302A25B8340003B159 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22D6D92F2A25B8340003B159 /* LoginView.swift */; };
 		4E205AC62A1B607F004809DC /* ChaChingApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E205AC52A1B607F004809DC /* ChaChingApp.swift */; };
 		4E205AC82A1B607F004809DC /* TransactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E205AC72A1B607F004809DC /* TransactionView.swift */; };
 		4E205ACA2A1B6080004809DC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4E205AC92A1B6080004809DC /* Assets.xcassets */; };
@@ -32,7 +33,6 @@
 		4E7CB0662A1DBCDB008B006A /* lottie-circle-animation.json in Resources */ = {isa = PBXBuildFile; fileRef = 4E7CB0652A1DBCDB008B006A /* lottie-circle-animation.json */; };
 		4E7CB0682A1DCA8A008B006A /* LottieView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C8C7C62A1D156200EF2893 /* LottieView.swift */; };
 		7DCE35DB2A24E9E0003D9C25 /* 98628-money-gift.json in Resources */ = {isa = PBXBuildFile; fileRef = 7DCE35DA2A24E9E0003D9C25 /* 98628-money-gift.json */; };
-		7DCE35DD2A24EAB6003D9C25 /* SearchingCustomer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DCE35DC2A24EAB6003D9C25 /* SearchingCustomer.swift */; };
 		E2C8C77C2A1C9E3900EF2893 /* Transaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C8C77B2A1C9E3900EF2893 /* Transaction.swift */; };
 		E2C8C7C52A1D153400EF2893 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = E2C8C7C42A1D153400EF2893 /* Lottie */; };
 		E2E306962A2458D5009BD3C6 /* EventService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E306952A2458D5009BD3C6 /* EventService.swift */; };
@@ -74,6 +74,7 @@
 		22A49A452A1C9DB800D5094D /* ErrorDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorDetails.swift; sourceTree = "<group>"; };
 		22A49A492A1CA05F00D5094D /* Log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
 		22A49A4B2A1CA26100D5094D /* PaynowLookupResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaynowLookupResponse.swift; sourceTree = "<group>"; };
+		22D6D92F2A25B8340003B159 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		4E205AC22A1B607F004809DC /* ChaChing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChaChing.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4E205AC52A1B607F004809DC /* ChaChingApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChaChingApp.swift; sourceTree = "<group>"; };
 		4E205AC72A1B607F004809DC /* TransactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionView.swift; sourceTree = "<group>"; };
@@ -88,7 +89,6 @@
 		4E782D592A20846C00A121BA /* PopUp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PopUp.swift; path = "ChaChing/Features/Transaction View/PopUp.swift"; sourceTree = SOURCE_ROOT; };
 		4E7CB0652A1DBCDB008B006A /* lottie-circle-animation.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "lottie-circle-animation.json"; sourceTree = "<group>"; };
 		7DCE35DA2A24E9E0003D9C25 /* 98628-money-gift.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "98628-money-gift.json"; sourceTree = "<group>"; };
-		7DCE35DC2A24EAB6003D9C25 /* SearchingCustomer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SearchingCustomer.swift; path = "../../../../../../.Trash/ChaChing/ChaChing/Features/Transaction View/Components/SearchingCustomer.swift"; sourceTree = "<group>"; };
 		E2C8C77B2A1C9E3900EF2893 /* Transaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transaction.swift; sourceTree = "<group>"; };
 		E2C8C7C62A1D156200EF2893 /* LottieView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieView.swift; sourceTree = "<group>"; };
 		E2E306952A2458D5009BD3C6 /* EventService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventService.swift; sourceTree = "<group>"; };
@@ -273,7 +273,7 @@
 				4E782D592A20846C00A121BA /* PopUp.swift */,
 				E2C8C7C62A1D156200EF2893 /* LottieView.swift */,
 				E2E306A42A248816009BD3C6 /* ReceivedPayment.swift */,
-				7DCE35DC2A24EAB6003D9C25 /* SearchingCustomer.swift */,
+				22D6D92F2A25B8340003B159 /* LoginView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -439,7 +439,6 @@
 				226276C12A1CB308002DBA57 /* Profile.swift in Sources */,
 				226276BE2A1CB308002DBA57 /* PaynowLookupRequest.swift in Sources */,
 				22A49A462A1C9DB800D5094D /* ErrorDetails.swift in Sources */,
-				7DCE35DD2A24EAB6003D9C25 /* SearchingCustomer.swift in Sources */,
 				22A49A4A2A1CA05F00D5094D /* Log.swift in Sources */,
 				E2E306962A2458D5009BD3C6 /* EventService.swift in Sources */,
 				4E205AC82A1B607F004809DC /* TransactionView.swift in Sources */,
@@ -448,6 +447,7 @@
 				22A49A3C2A1C785A00D5094D /* Config.swift in Sources */,
 				E2E3069D2A2464D9009BD3C6 /* Multipeer.swift in Sources */,
 				4E205AC62A1B607F004809DC /* ChaChingApp.swift in Sources */,
+				22D6D9302A25B8340003B159 /* LoginView.swift in Sources */,
 				E2C8C77C2A1C9E3900EF2893 /* Transaction.swift in Sources */,
 				4E782D582A20845C00A121BA /* TransactionsPerDay.swift in Sources */,
 				226276C32A1CB308002DBA57 /* PayeeResponse.swift in Sources */,
@@ -625,7 +625,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -655,7 +655,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
