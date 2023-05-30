@@ -13,6 +13,9 @@ struct PopUpWindow: View {
 //    var title: String = transactionDetails.payer
     var message: String = "vsadhjVSAD"
     var buttonText: String = "ok"
+    var title: String
+    var message: String
+    var buttonText: String
     @Binding var show: Bool
     var body: some View {
         ZStack {

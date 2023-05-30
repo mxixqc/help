@@ -8,6 +8,7 @@
 import Foundation
 
 struct Profile: Codable {
+    let id: String
     let name: String
     let balance: Double
     let phoneNumber: String

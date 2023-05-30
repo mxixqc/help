@@ -11,7 +11,7 @@ import SwiftUI
 struct ChaChingApp: App {
     var body: some Scene {
         WindowGroup {
-            TransactionView()
+            LoginView()
         }
     }
 }

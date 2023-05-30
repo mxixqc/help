@@ -23,15 +23,37 @@ class APIService {
         case get = "GET"
         case post = "POST"
     }
+    
+    private func saveAccessToken(_ token: String){
+        Config.accessToken = token
+    }
+    
+    func paynowLookup(phoneNumber: String) async throws -> Result<PaynowLookupResponse, ErrorDetails> {
+        let request = createRequest(
+            method: .post,
+            endpoint: Paths.paynowLookup,
+            body: try! encoder.encode(PaynowLookupRequest(phoneNumber: phoneNumber))
+        )
+        let result: Result<PaynowLookupResponse, ErrorDetails> = try await fetch(request)
+        switch result{
+        case .success(let lookupResponse):
+            saveAccessToken(lookupResponse.jwtToken!)
+        default:
+            break
+        }
+        
+        return result
+    }
+
 
     func login(username: String) async throws -> Result<Credentials, ErrorDetails> {
         self.username = username
         let request = createRequest(method: .post, endpoint: Paths.login + "/\(username)")
-        let result: Result<Credentials, ErrorDetails> = try await fetch(request: request)
+        let result: Result<Credentials, ErrorDetails> = try await fetch(request)
         
         switch result {
         case .success(let credentials):
-            Config.accessToken = credentials.accessToken
+            saveAccessToken(credentials.accessToken)
         default:
             break
         }
@@ -87,6 +109,7 @@ class APIService {
         if let queryItems = queryItems {
             urlComponents.queryItems = queryItems
         }
+        
         var request = URLRequest(url: urlComponents.url!)
         request.httpMethod = method.rawValue
         if let body = body {
@@ -117,7 +140,7 @@ class APIService {
         return try decoder.decode(T.self, from: data)
     }
     
-    private func fetch<T>(request: URLRequest) async throws -> Result<T, ErrorDetails> where T: Decodable {
+    private func fetch<T>(_ request: URLRequest) async throws -> Result<T, ErrorDetails> where T: Decodable {
         Log.api("Fetching: \(String(describing: request.url?.absoluteString ?? ""))")
         Log.api("Fetching http Body: \(String(decoding: request.httpBody ?? Data(), as: UTF8.self))")
         let (data, urlResponse) = try await urlSession.data(for: request)
@@ -139,5 +162,36 @@ class APIService {
         let responseObject = try decoder.decode(T.self, from: data)
         return .success(responseObject)
     }
-
+    
+    func getTransactions() async throws -> Result<[Transaction], ErrorDetails> {
+        var request = createRequest(endpoint: Paths.transaction)
+        return try await fetch(request)
+    }
+    
+//    func login(username: String) async throws -> Bool {
+//        let request = createRequest(method: .post, endpoint: Paths.login + "/\(username)")
+//        let result: Result<Credentials, ErrorDetails> = try await fetch(request)
+//
+//        switch result {
+//        case .success(let response):
+//            saveAccessToken(response.accessToken)
+//        case .failure(let errorDetails):
+//            print(errorDetails)
+//            return false
+//        }
+//
+//        return true
+//    }
+    
+    
+    func makeTransaction(amount: Int, addressToken: String) async throws -> Result<MakeTransactionResponse, ErrorDetails> {
+        var request = createRequest(method: .post, endpoint: Paths.transaction)
+        let json: [String: Any] = [
+            "token": addressToken,
+            "value": amount
+        ]
+        request.httpBody = try? JSONSerialization.data(withJSONObject: json)
+        return try await fetch(request)
+    }
+    
 }

@@ -24,51 +24,62 @@ struct TransactionView: View {
     @State private var isShowingContent = false
     @State private var isShowingRadar = true
     @AppStorage(Keys.username) private var username: String?
-    @ObservedObject var refreshAmount = RefreshAmount()
+    @State var isLoading = true
     
-    @State var name: Transaction = Transaction(payer: "Jin Daat", payee: "Economic Rice", amount: 10.00, dateTime: Date())
+    func getTransactions() {
+        isLoading = true
+        Task {
+            do {
+                let result = try await APIService.shared.getTransactions()
+                switch result {
+                case .success(let transactions):
+                    sections = parseTransactions(transactions)
+                    print(transactions)
+                    isLoading = false
+                case .failure(let errorDetails):
+                    isLoading = false
+                    print("Failed to retrieve data")
+                }
+            } catch {
+                isLoading = false
+                print("something went wrong")
+            }
+        }
+    }
     
-    let sections: [TransactionsPerDay]
-    
-    init() {
-//        @ObservedObject var refreshAmount: RefreshAmount
-//        var lol  = "897"
-//        self.refreshAmount.amount = lol
+    func parseTransactions(_ transaction: [Transaction]) -> [TransactionsPerDay] {
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .medium
         dateFormatter.timeStyle = .none
-        dateFormatter.dateFormat = "dd MMMM yyyy"
-        
-        let mockDate: Date = dateFormatter.date(from: "23 May 2023") ?? Date()
-//        let recentDate: Date = Date()
-        
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        var sortedTransactions = transaction.sorted { $0.getDate() > $1.getDate() }
+        mostRecentTransaction = sortedTransactions.first
 
-        let allTransactions: [Transaction] = [
-            .init(payer: "Johann", payee: "Economic Rice", amount: 10.00, dateTime: mockDate),
-            .init(payer: "Shaan", payee: "Economic Rice", amount: 10.00, dateTime: mockDate),
-            .init(payer: "Esther", payee: "Economic Rice", amount: 10.00, dateTime: mockDate),
-            .init(payer: "Jin Daat", payee: "Economic Rice", amount: 10.00, dateTime: mockDate),
-            .init(payer: "Jin Daat", payee: "Economic Rice", amount: 10.00, dateTime: mockDate),
-            .init(payer: "Test", payee: "Rice", amount: 10.00, dateTime: Date()),
-            .init(payer: "Jin Daat", payee: "Economic Rice", amount: 10.00, dateTime: Date()),
-            .init(payer: "Jin Daat", payee: "Economic Rice", amount: 10.00, dateTime: Date()),
-            
-        ].sorted { $0.dateTime < $1.dateTime }
         
-        let grouped = Dictionary(grouping: allTransactions) { (transaction: Transaction) -> String in
-            dateFormatter.string(from: transaction.dateTime)
+        let grouped = Dictionary(grouping: sortedTransactions) { (transaction: Transaction) ->
+            // group by date
+            Date? in
+            return dateFormatter.date(from: String(transaction.dateTime.dropLast(16)))
         }
-
-        self.sections = grouped.map { transactionsPerDay -> TransactionsPerDay in
-            TransactionsPerDay(title: transactionsPerDay.key, transactions: transactionsPerDay.value, date: transactionsPerDay.value[0].dateTime)
+        
+        return grouped.map { transactionsPerDay -> TransactionsPerDay in
+            TransactionsPerDay(
+                title: dateFormatter.string(from:transactionsPerDay.key!),
+                transactions: transactionsPerDay.value,
+                date: dateFormatter.date(from: String(transactionsPerDay.value[0].dateTime.dropLast(16)))!)
         }.sorted { $0.date > $1.date }
     }
-    
-    var body: some View {
+
+    @ObservedObject var refreshAmount = RefreshAmount()
         
-        ZStack{
-            VStack {
-                SearchingCustomer(show: $isShowingRadar)
+    let sections: [TransactionsPerDay]
+        
+    var body: some View {
+        VStack {
+            if isLoading {
+                ProgressView()
+            } else {
+                VStack {
                 ReceivedPayment(show: $isShowingContent)
                                      .onAppear {
                                          refreshAmount.amount = "78.00"
@@ -77,7 +88,6 @@ struct TransactionView: View {
                                              withAnimation(.easeInOut(duration: 0.5)) {
                                                  self.isShowingContent.toggle()
                                                  self.isShowingRadar.toggle()
-//                                                 refreshAmount.amount = "78.00"
                                                  
                                              }
                                          }
@@ -113,24 +123,38 @@ struct TransactionView: View {
                     PopUpWindow(transactionDetails: name, show: $showingPopUp)
                 }}}
             .onAppear {
-                    setup()
+                    getTransactions()
                 }
                 .padding()
         
-    }
-        
-    func setup(){
-        Task {
-            let result = try await APIService.shared.login(username: "Shafiq")
-            switch result {
-            case .success:
-                startAdvertising()
-            case .failure:
-                print("failure")
-            }
         }
     }
-        
+
+//             }
+//         }
+//         .onAppear {
+//             getTransactions()
+//         }
+//         .sheet(isPresented: $showingSheet){
+//             List {
+//                 ForEach(self.sections) { section in
+//                     Section(header: Text(section.title)) {
+//                         ForEach(section.transactions) { transaction in
+//                             TransactionRow(transaction: transaction)
+//                         }
+//                     }
+//                 }
+//             }
+//             .navigationBarTitle(Text("Events"))
+//             .presentationDetents([.fraction(0.45), .large])
+// //            .presentationBackgroundInteraction(
+// //                .enabled(upThrough: .large)
+// //            )
+//             .interactiveDismissDisabled(false)
+//         }
+//         .padding()
+    
+
     
     func startAdvertising() {
         Task {
@@ -139,23 +163,21 @@ struct TransactionView: View {
             InAppNotificationManager.shared.setupNotifications()
             print("tftftfuyfv")
             self.isShowingContent = true
-            
         }
     }
-}
 
 struct AmountRecievedView: View {
-    var amount: String = ""
+    @State var mostRecentTransaction: Transaction = .init(payer: "String", payee: "String", amount: 12.2, dateTime: "2023-05-29T07:09:13.285424")
     var body: some View {
         VStack{
-            Text("Most Recent, Received 23 Oct 2023, 4:09:00 PM")
+            Text("Most Recent, \(mostRecentTransaction.getDate())")
                 .font(.system(size: 12))
                 .foregroundColor(.gray)
                 .lineLimit(1)
                 .padding([.top, .horizontal], 25)
             
             HStack(alignment: .bottom) {
-                Text(amount)
+                Text("\(mostRecentTransaction.getStringAmount())")
                     .font(.system(size: 42))
                     .foregroundColor(.green)
                 
@@ -180,7 +202,7 @@ struct TransactionRow: View {
     
     var body: some View {
         HStack(spacing: 8) {
-            Text(dateFormatter.string(from:transaction.dateTime))
+//            Text(dateFormatter.S)
             Text(transaction.payee)
             Spacer()
             Text(String(transaction.amount))
