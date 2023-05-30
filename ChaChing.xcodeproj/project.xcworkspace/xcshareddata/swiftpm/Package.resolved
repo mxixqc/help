@@ -1,0 +1,23 @@
+{
+  "pins" : [
+    {
+      "identity" : "eventsource",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/inaka/EventSource.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "78934b361891c7d0fa3d399d128e959f0c94d267"
+      }
+    },
+    {
+      "identity" : "lottie-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/airbnb/lottie-ios.git",
+      "state" : {
+        "revision" : "a4622b4d6fdbe76cc5487bc27e84029abaf07217",
+        "version" : "4.0.1"
+      }
+    }
+  ],
+  "version" : 2
+}
